@@ -1,4 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_file
+
+import json
+import os
+from flask import flash
+
 from grading import grading_criteria
 import re
 import datetime
@@ -122,6 +127,64 @@ def fill_cover_sheet():
     return send_file(output_pdf, as_attachment=True)
     # return redirect(url_for('index'))
 
+
+from flask import send_from_directory
+from werkzeug.utils import secure_filename
+
+# Replace your save_data function with this one
+@app.route('/save_data', methods=['POST'])
+def save_data():
+    candidate_name = session.get("candidate_name", "Candidate")
+    filename = f"{candidate_name}_assessment_data.json"
+
+    data = {
+        "sections": session.get("sections", []),
+        "total_score": session.get("total_score", 0),
+    }
+    for section in data["sections"]:
+        data[f"{section}_score"] = session.get(f"{section}_score", 0)
+        data[f"{section}_comments"] = session.get(f"{section}_comments", "")
+
+    with open(filename, "w") as file:
+        json.dump(data, file)
+
+    return send_file(filename, as_attachment=True)
+
+# Replace your load_data function with this one
+@app.route('/load_data', methods=['POST'])
+def load_data():
+    if 'file' not in request.files:
+        flash('No file uploaded')
+        return redirect(url_for("summary"))
+
+    file = request.files['file']
+    if file.filename == '':
+        flash('No file selected')
+        return redirect(url_for("summary"))
+
+    if file and file.filename.endswith('.json'):
+        data = json.load(file)
+
+        for key, value in data.items():
+            session[key] = value
+
+        flash("Data loaded successfully.")
+    else:
+        flash("Invalid file format. Please upload a JSON file.")
+
+    return redirect(url_for("summary"))
+
+@app.route('/clear_data', methods=['POST'])
+def clear_data():
+    sections = session.get('sections', [])
+    for section in sections:
+        session.pop(f"{section}_score", None)
+        session.pop(f"{section}_comments", None)
+
+    session.pop('total_score', None)
+
+    flash("Data cleared successfully.")
+    return redirect(url_for("summary"))
 
 if __name__ == '__main__':
     app.run(debug=True)

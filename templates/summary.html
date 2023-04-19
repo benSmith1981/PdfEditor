@@ -8,6 +8,17 @@
   <body>
     <div class="container">
       <h1>Assessment Summary</h1>
+      <!-- Add this code below the <h1> tag in your summary.html file -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="collection">
+        {% for message in messages %}
+        <li class="collection-item">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
       <table class="striped">
           <thead>
             <tr>
@@ -32,6 +43,38 @@
             
           </tbody>
       </table>
+        <!-- Add this code below the </table> tag in your summary.html file -->
+        <div class="row">
+            <div class="col s6">
+            <form method="POST" action="{{ url_for('save_data') }}">
+                <input type="submit" value="Save Data" class="btn">
+            </form>
+            </div>
+            <div class="col s6">
+            <form method="POST" action="{{ url_for('load_data') }}" enctype="multipart/form-data">
+                <div class="file-field input-field">
+                <div class="btn">
+                    <span>Load Data</span>
+                    <input type="file" name="file" accept=".json">
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text" placeholder="Upload JSON file">
+                </div>
+                </div>
+                <input type="submit" value="Load Data" class="btn">
+            </form>
+            </div>
+        </div>
+        <!-- Add this code below the file upload form in your summary.html file -->
+        <div class="row">
+            <div class="col s12">
+            <form method="POST" action="{{ url_for('clear_data') }}">
+                <input type="submit" value="Clear Data" class="btn red">
+            </form>
+            </div>
+        </div>
+  
+  
     <h2>Fill out cover sheet</h2>
     <form method="POST" action="{{ url_for('fill_cover_sheet') }}">
       <label for="candidate_name">Candidate Name:</label>
