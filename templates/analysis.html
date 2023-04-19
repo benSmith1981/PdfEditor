@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis</title>
+</head>
+<body>
+    <h1>Analysis</h1>
+    <form method="POST">
+        {% for boundary, criteria in grading_criteria.items() %}
+            <h3>{{ boundary }}</h3>
+            {% for criterion in criteria %}
+                <input type="checkbox" id="{{ criterion }}" name="{{ criterion }}" value="1">
+                <label for="{{ criterion }}">{{ criterion }}</label><br>
+            {% endfor %}
+        {% endfor %}
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
