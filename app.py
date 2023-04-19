@@ -1,103 +1,115 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_file
+from grading import grading_criteria
+import re
+import datetime
+from pdfeditor import fill_pdf
+now = datetime.datetime.now()
+current_year = now.year
 
 app = Flask(__name__)
 app.secret_key = "secret-key"
 
 @app.route('/')
 def index():
-    return redirect(url_for('design'))
+    return redirect(url_for('assessment', section='analysis'))
 
-@app.route('/design', methods=['GET', 'POST'])
-def design():
-    if request.method == 'POST':
-        session['design_score'] = int(request.form.get('design'))
-        return redirect(url_for('analysis'))
-    return render_template('design.html')
+@app.route('/<section>', methods=['GET', 'POST'])
+def assessment(section):
+    sections = ["analysis", "design", "developing_coded_solution", "testing_inform_development", "testing_inform_evaluation", "evaluation_of_solution"]
+    if section not in sections:
+        return "Invalid section", 404
 
-
-@app.route('/development', methods=['GET', 'POST'])
-def development():
-    if request.method == 'POST':
-        session['development_score'] = int(request.form.get('development'))
-        return redirect(url_for('testing'))
-    return render_template('development.html')
-
-@app.route('/testing', methods=['GET', 'POST'])
-def testing():
-    if request.method == 'POST':
-        session['testing_score'] = int(request.form.get('testing'))
-        return redirect(url_for('evaluation'))
-    return render_template('testing.html')
-
-@app.route('/evaluation', methods=['GET', 'POST'])
-def evaluation():
-    if request.method == 'POST':
-        session['evaluation_score'] = int(request.form.get('evaluation'))
-        return redirect(url_for('result'))
-    return render_template('evaluation.html')
-
-@app.route('/result')
-def result():
-    total_score = sum([session.get(key, 0) for key in ('design_score', 'analysis_score', 'development_score', 'testing_score', 'evaluation_score')])
-    return render_template('result.html', total_score=total_score)
-
-
-@app.route('/analysis', methods=['GET', 'POST'])
-def analysis():
-    grading_criteria = {
-        "1-2 marks": [
-            "Identified some features that make the problem solvable by computational methods.",
-            "Identified suitable stakeholders for the project and described them and some of their requirements.",
-            "Identified some appropriate features to incorporate into their solution.",
-            "Identified some features of the proposed computational solution.",
-            "Identified some limitations of the proposed solution.",
-            "Identified some requirements for the solution.",
-            "Identified some success criteria for the proposed solution."
-        ],
-        "3-5 marks": [
-            "Described the features that make the problem solvable by computational methods.",
-            "Identified suitable stakeholders for the project and described how they will make use of the proposed solution.",
-            "Researched the problem looking at existing solutions to similar problems identifying some appropriate features to incorporate into their solution.",
-            "Identified the essential features of the proposed computational solution.",
-            "Identified and described some limitations of the proposed solution.",
-            "Identified most requirements for the solution.",
-            "Identified some measurable success criteria for the proposed solution."
-        ],
-        "6-8 marks": [
-            "Described the features that make the problem solvable by computational methods and why it is amenable to a computational approach.",
-            "Identified suitable stakeholders for the project and described them and how they will make use of the proposed solution and why it is appropriate to their needs.",
-            "Researched the problem in depth looking at existing solutions to similar problems identifying and describing suitable approaches based on this research.",
-            "Identified and described the essential features of the proposed computational solution.",
-            "Identified and explained any limitations of the proposed solution.",
-            "Specified the requirements for the solution including (as appropriate) any hardware and software requirements.",
-            "Identified measurable success criteria for the proposed solution."
-        ],
-        "9-10 marks": [
-            "Described and justified the features that make the problem solvable by computational methods, explaining why it is amenable to a computational approach.",
-            "Identified suitable stakeholders for the project and described them explaining how they will make use of the proposed solution and why it is appropriate to their needs.",
-            "Researched the problem in depth looking at existing solutions to similar problems, identifying and justifying suitable approaches based on this research.",
-            "Identified the essential features of the proposed computational solution explaining these choices.",
-            "Identified and explained with justification any limitations of the proposed solution.",
-            "Specified and justified the requirements for the solution including (as appropriate) any hardware and software requirements.",
-            "Identified and justified measurable success criteria for the proposed solution."
-        ]
-    }
     if request.method == 'POST':
         selected_criteria = {}
-        for boundary, criteria in grading_criteria.items():
+        for boundary, criteria in grading_criteria[section].items():
             selected_criteria[boundary] = [criterion for criterion in criteria if request.form.get(criterion) == '1']
 
+        total_criteria = len(grading_criteria[section].keys())
+        max_score = max([int(re.search(r'\d+', boundary).group()) for boundary in grading_criteria[section].keys()])
+        
+        score_per_criterion = {}
+        for boundary in grading_criteria[section]:
+            # Extract the integer value from the boundary string using regular expressions
+            match = re.search(r'\d+', boundary)
+            if match:
+                score = int(match.group())
+                score_per_criterion[boundary] = score / total_criteria
+
         score = 0
-        if len(selected_criteria["9-10 marks"]) > 0:
-            score = 9
-        elif len(selected_criteria["6-8 marks"]) > 0:
-            score = 6
-        elif len(selected_criteria["3-5 marks"]) > 0:
-            score = 3
+        for boundary, selected in selected_criteria.items():
+            score += len(selected) * score_per_criterion[boundary]
+
+        session[f'{section}_score'] = score
+        if section == "evaluation":
+            analysis_score = session.get('analysis_score', 0)
+            design_score = session.get('design_score', 0)
+            development_score = session.get('development_score', 0)
+            testing_inform_dev_score = session.get('testing_inform_dev_score', 0)
+            testing_inform_eval_score = session.get('testing_inform_eval_score', 0)
+            eval_score = score
+            total_score = analysis_score + design_score + development_score + testing_inform_dev_score + testing_inform_eval_score + eval_score
+            return redirect(url_for('summary', analysis_score=analysis_score, design_score=design_score, development_score=development_score, testing_inform_dev_score=testing_inform_dev_score, testing_inform_eval_score=testing_inform_eval_score, eval_score=eval_score, total_score=total_score))
         else:
-            score = 1
+            next_section_index = (sections.index(section) + 1) % len(sections)
+            if next_section_index == 0:
+                return render_template('summary.html', current_year=current_year)
+            else:
+                next_section = sections[next_section_index]
+                return redirect(url_for('assessment', section=next_section))
 
-        session['analysis_score'] = score
-        return redirect(url_for('development'))
 
-    return render_template('analysis.html', grading_criteria=grading_criteria)
+    next_section_index = (sections.index(section) + 1) % len(sections)
+    if next_section_index == 0:
+        return render_template('assessment.html', grading_criteria=grading_criteria[section], section=section)
+    else:
+        next_section = sections[next_section_index]
+        return render_template('assessment.html', grading_criteria=grading_criteria[section], section=section, next_section=next_section)
+
+
+
+@app.route('/summary')
+def summary():
+    analysis_score = request.args.get('analysis_score')
+    design_score = request.args.get('design_score')
+    development_score = request.args.get('development_score')
+    testing_inform_dev_score = request.args.get('testing_inform_dev_score')
+    testing_inform_eval_score = request.args.get('testing_inform_eval_score')
+    eval_score = request.args.get('eval_score')
+    total_score = request.args.get('total_score')
+    return render_template('summary.html', analysis_score=analysis_score, design_score=design_score, development_score=development_score, testing_inform_dev_score=testing_inform_dev_score, testing_inform_eval_score=testing_inform_eval_score, eval_score=eval_score, total_score=total_score)
+
+@app.route('/fill_cover_sheet', methods=['POST'])
+def fill_cover_sheet():
+    input_pdf = '330205-non-exam-assessment-cover-sheet-interactive.pdf'
+    output_pdf = 'output.pdf'
+    
+    data_dict = {
+        'candidate_name': request.form.get('candidate_name'),
+        'candidate_number': request.form.get('candidate_number'),
+        'centre_number': request.form.get('centre_number', '50507'),
+        'centre_name': request.form.get('centre_name', 'City of Bristol College'),
+        'unit_code': request.form.get('unit_code', 'H446 (03/04)'),
+        'session': request.form.get('session', 'June'),
+        'year': request.form.get('year', str(datetime.date.today().year)),
+        'unit_title': request.form.get('unit_title', 'Programming project'),
+        'analysis_score': session.get('analysis_score', 0),
+        'design_score': session.get('design_score', 0),
+        'development_score': session.get('development_score', 0),
+        'testing_inform_dev_score': session.get('testing_inform_dev_score', 0),
+        'testing_inform_eval_score': session.get('testing_inform_eval_score', 0),
+        'evaluation_score': session.get('evaluation_score', 0),
+        'analysis_comments': request.form.get('analysis_comments'),
+        'design_comments': request.form.get('design_comments'),
+        'development_comments': request.form.get('development_comments'),
+        'testing_inform_dev_comments': request.form.get('testing_inform_dev_comments'),
+        'testing_inform_eval_comments': request.form.get('testing_inform_eval_comments'),
+        'evaluation_comments': request.form.get('evaluation_comments')
+    }
+
+    fill_pdf(input_pdf, output_pdf, data_dict)
+    return send_file(output_pdf, as_attachment=True)
+    # return redirect(url_for('index'))
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

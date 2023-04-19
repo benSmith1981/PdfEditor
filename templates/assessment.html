@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Analysis</title>
+    <title>{{ section.capitalize() }}</title>
 </head>
 <body>
-    <h1>Analysis</h1>
-    <form method="POST">
+    <h1>{{ section.capitalize() }}</h1>
+    <form method="POST" action="{{ url_for('assessment', section=section) }}">
         {% for boundary, criteria in grading_criteria.items() %}
             <h3>{{ boundary }}</h3>
             {% for criterion in criteria %}
