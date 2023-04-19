@@ -27,6 +27,12 @@ def assessment(section):
         total_criteria = len(grading_criteria[section].keys())
         max_score = max([int(re.search(r'\d+', boundary).group()) for boundary in grading_criteria[section].keys()])
         
+        # Store the comment for this section
+        comment = request.form.get(f'{section}_comments')
+        print(comment)
+        if comment:
+            session[f'{section}_comments'] = comment
+
         score_per_criterion = {}
         for boundary in grading_criteria[section]:
             # Extract the integer value from the boundary string using regular expressions
@@ -40,22 +46,32 @@ def assessment(section):
             score += len(selected) * score_per_criterion[boundary]
 
         session[f'{section}_score'] = score
-        if section == "evaluation":
+        # print(session)
+
+        if section == "evaluation_of_solution":
             analysis_score = session.get('analysis_score', 0)
             design_score = session.get('design_score', 0)
-            development_score = session.get('development_score', 0)
-            testing_inform_dev_score = session.get('testing_inform_dev_score', 0)
-            testing_inform_eval_score = session.get('testing_inform_eval_score', 0)
+            development_score = session.get('developing_coded_solution_score', 0)
+            testing_inform_dev_score = session.get('testing_inform_development_score', 0)
+            testing_inform_eval_score = session.get('testing_inform_evaluation_score', 0)
             eval_score = score
             total_score = analysis_score + design_score + development_score + testing_inform_dev_score + testing_inform_eval_score + eval_score
-            return redirect(url_for('summary', analysis_score=analysis_score, design_score=design_score, development_score=development_score, testing_inform_dev_score=testing_inform_dev_score, testing_inform_eval_score=testing_inform_eval_score, eval_score=eval_score, total_score=total_score))
+            session['total_score'] = total_score  # Store total score in the session
+            session['sections'] = sections
+            return redirect(url_for('summary'))
+
         else:
-            next_section_index = (sections.index(section) + 1) % len(sections)
-            if next_section_index == 0:
-                return render_template('summary.html', current_year=current_year)
+            next_section_index = sections.index(section) + 1
+                        
+                        
+            session['sections'] = sections
+
+            if next_section_index == len(sections):
+                return redirect(url_for('summary'))
             else:
                 next_section = sections[next_section_index]
                 return redirect(url_for('assessment', section=next_section))
+
 
 
     next_section_index = (sections.index(section) + 1) % len(sections)
@@ -69,14 +85,9 @@ def assessment(section):
 
 @app.route('/summary')
 def summary():
-    analysis_score = request.args.get('analysis_score')
-    design_score = request.args.get('design_score')
-    development_score = request.args.get('development_score')
-    testing_inform_dev_score = request.args.get('testing_inform_dev_score')
-    testing_inform_eval_score = request.args.get('testing_inform_eval_score')
-    eval_score = request.args.get('eval_score')
-    total_score = request.args.get('total_score')
-    return render_template('summary.html', analysis_score=analysis_score, design_score=design_score, development_score=development_score, testing_inform_dev_score=testing_inform_dev_score, testing_inform_eval_score=testing_inform_eval_score, eval_score=eval_score, total_score=total_score)
+    sections = session.get('sections', [])
+    print(sections)
+    return render_template('summary.html', sections=sections, current_year=current_year)
 
 @app.route('/fill_cover_sheet', methods=['POST'])
 def fill_cover_sheet():
@@ -94,17 +105,18 @@ def fill_cover_sheet():
         'unit_title': request.form.get('unit_title', 'Programming project'),
         'analysis_score': session.get('analysis_score', 0),
         'design_score': session.get('design_score', 0),
-        'development_score': session.get('development_score', 0),
-        'testing_inform_dev_score': session.get('testing_inform_dev_score', 0),
-        'testing_inform_eval_score': session.get('testing_inform_eval_score', 0),
-        'evaluation_score': session.get('evaluation_score', 0),
-        'analysis_comments': request.form.get('analysis_comments'),
-        'design_comments': request.form.get('design_comments'),
-        'development_comments': request.form.get('development_comments'),
-        'testing_inform_dev_comments': request.form.get('testing_inform_dev_comments'),
-        'testing_inform_eval_comments': request.form.get('testing_inform_eval_comments'),
-        'evaluation_comments': request.form.get('evaluation_comments')
+        'development_score': session.get('developing_coded_solution_score', 0),
+        'testing_inform_dev_score': session.get('testing_inform_development_score', 0),
+        'testing_inform_eval_score': session.get('testing_inform_evaluation_score_score', 0),
+        'evaluation_score': session.get('evaluation_of_solution_score', 0),
+        'analysis_comments': session.get('analysis_comments', ''),
+        'design_comments': session.get('design_comments', ''),
+        'development_comments': session.get('developing_coded_solution_comments', ''),
+        'testing_inform_dev_comments': session.get('testing_inform_development_comments', ''),
+        'testing_inform_eval_comments': session.get('testing_inform_evaluation_comments', ''),
+        'evaluation_comments': session.get('evaluation_of_solution_comments', '')
     }
+
 
     fill_pdf(input_pdf, output_pdf, data_dict)
     return send_file(output_pdf, as_attachment=True)

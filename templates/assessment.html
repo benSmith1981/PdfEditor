@@ -2,19 +2,30 @@
 <html>
 <head>
     <title>{{ section.capitalize() }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
 <body>
-    <h1>{{ section.capitalize() }}</h1>
-    <form method="POST" action="{{ url_for('assessment', section=section) }}">
-        {% for boundary, criteria in grading_criteria.items() %}
-            <h3>{{ boundary }}</h3>
-            {% for criterion in criteria %}
-                <input type="checkbox" id="{{ criterion }}" name="{{ criterion }}" value="1">
-                <label for="{{ criterion }}">{{ criterion }}</label><br>
+    <div class="container">
+        <h1>{{ section.capitalize() }}</h1>
+        <form method="POST" action="{{ url_for('assessment', section=section) }}">
+            {% for boundary, criteria in grading_criteria.items() %}
+                <h3>{{ boundary }}</h3>
+                {% for criterion in criteria %}
+                    <label>
+                        <input type="checkbox" id="{{ criterion }}" name="{{ criterion }}" value="1">
+                        <span>{{ criterion }}</span>
+                    </label><br>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
-        <br>
-        <input type="submit" value="Submit">
-    </form>
+            <br>
+            <label for="{{ section }}_comments">Comments:</label>
+            <input type="text" id="{{ section }}_comments" name="{{ section }}_comments">
+            <br><br>
+            <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                <i class="material-icons right">send</i>
+            </button>
+        </form>
+    </div>
 </body>
 </html>
