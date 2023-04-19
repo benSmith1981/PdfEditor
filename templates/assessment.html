@@ -14,9 +14,9 @@
                 {% for criterion in criteria %}
                     <label>
                         <input type="checkbox" id="{{ criterion }}" name="{{ criterion }}" value="1">
-                        <span>{{ criterion }}</span>
+                        <span id="span-{{ criterion }}">{{ criterion }}</span>
                     </label>
-                    <button class="btn waves-effect waves-light" type="button" onclick="copyToClipboard('{{ criterion }}')">Copy</button>
+                    <button class="btn waves-effect waves-light" type="button" onclick="copyToClipboard('span-{{ criterion }}')">Copy</button>
                     <!-- <button class="btn waves-effect waves-light" type="button" onclick="copyToClipboard('{{ criterion }}')">Copy</button>
                     <span>Score band: {{ boundary }}</span> -->
                     <br>
@@ -35,6 +35,9 @@
     <script>
         function copyToClipboard(elementId) {
             const text = document.getElementById(elementId).innerText;
+            console.log(text)
+            console.log(elementId)
+
             const textarea = document.createElement('textarea');
             textarea.value = text;
             document.body.appendChild(textarea);
