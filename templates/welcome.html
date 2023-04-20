@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assessment Welcome</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+        .buymeacoffee {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 180px;
+            height: 180px;
+            background-image: url('https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png');
+            background-repeat: no-repeat;
+            background-size: contain;
+            z-index: 999;
+            cursor: pointer;
+        }
+
+        .card {
+            margin-top: 50px;
+            padding: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .start-button {
+            font-size: 24px;
+            padding: 10px 30px;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <h1>Get started on marking Computer Science A-level project</h1>
+                <div class="card">
+                    <p>Just tick the criteria from the band you think the student achieved and then enter a comment. Then you will be taken to a summary page which adds up an estimated score and allows you to enter other student details (that are not saved on any server) and can be saved and loaded locally. You can then generate the official OCR PDF for the mark scheme.</p>
+                    <div class="button-container">
+                        <a href="{{ url_for('assessment', section='analysis') }}" class="start-button">Start Assessment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="buymeacoffee" onclick="window.open('https:\/\/www.buymeacoffee.com/benjamina', '_blank')"></div>
+    </div>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJ44Q5THKM"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-PJ44Q5THKM');
+    </script>
+</body>
+</html>

@@ -24,11 +24,15 @@ section_max_scores = {
 }
 @app.route('/')
 def index():
-    return redirect(url_for('assessment', section='analysis'))
+    return render_template('welcome.html')
+    # return redirect(url_for('assessment', section='analysis'))
 
 @app.route('/<section>', methods=['GET', 'POST'])
 def assessment(section):
     sections = ["analysis", "design", "developing_coded_solution", "testing_inform_development", "testing_inform_evaluation", "evaluation_of_solution"]
+    # Handle the analysis section separately
+    print(section)
+
     if section not in sections:
         return "Invalid section", 404
 
