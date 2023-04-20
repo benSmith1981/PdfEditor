@@ -9,8 +9,16 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
+            width: 60px;
+            height: 60px;
+            background-image: url('https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png');
+            background-repeat: no-repeat;
+            background-size: contain;
+            z-index: 999;
+            cursor: pointer;
         }
     </style>
+
 </head>
 <body>
     <div class="container">
@@ -38,16 +46,10 @@
                 <i class="material-icons right">send</i>
             </button>
         </form>
+        <div class="buymeacoffee" onclick="window.open('https:\/\/www.buymeacoffee.com/benjamina', '_blank')"></div>
+
     </div>
-    <div class="col s6">
-        <div class="card-panel buymeacoffee">
-            <h5>Enjoying this tool?</h5>
-            <p>If you find this tool useful, please consider buying me a coffee to support its development and maintenance.</p>
-            <a href="https://www.buymeacoffee.com/benjamina" target="_blank" class="btn waves-effect waves-light">
-                <i class="material-icons left">local_cafe</i> Buy me a coffee
-            </a>
-        </div>
-    </div>
+
     <script>
         function copyToClipboard(elementId) {
             const text = document.getElementById(elementId).innerText;
