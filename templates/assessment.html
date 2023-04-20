@@ -10,18 +10,18 @@
         <h1>{{ section.capitalize() }}</h1>
         <form method="POST" action="{{ url_for('assessment', section=section) }}">
             {% for boundary, criteria in grading_criteria.items() %}
-                <h3>{{ boundary }}</h3>
-                {% for criterion in criteria %}
+            <h3>{{ boundary }}</h3>
+            {% for criterion in criteria %}
+                {% set unique_criterion_id = boundary ~ "__" ~ criterion %}
                     <label>
-                        <input type="checkbox" id="{{ criterion }}" name="{{ criterion }}" value="1">
-                        <span id="span-{{ criterion }}">{{ boundary }}: {{ criterion }}</span>
+                        <input type="checkbox" id="{{ unique_criterion_id }}" name="{{ unique_criterion_id }}" value="1">
+                        <span id="span-{{ unique_criterion_id }}">{{ boundary }}: {{ criterion }}</span>
                     </label>
-                    <button class="btn waves-effect waves-light" type="button" onclick="copyToClipboard('span-{{ criterion }}')">Copy</button>
-                    <!-- <button class="btn waves-effect waves-light" type="button" onclick="copyToClipboard('{{ criterion }}')">Copy</button>
-                    <span>Score band: {{ boundary }}</span> -->
+                    <button class="btn waves-effect waves-light" type="button" onclick="copyToClipboard('span-{{ unique_criterion_id }}')">Copy</button>
                     <br>
                 {% endfor %}
             {% endfor %}
+        
         
             <br>
             <label for="{{ section }}_comments">Comments:</label>

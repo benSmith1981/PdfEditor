@@ -33,29 +33,57 @@ def assessment(section):
         return "Invalid section", 404
 
     if request.method == 'POST':
+        # selected_criteria = {}
+        # for boundary, criteria in grading_criteria[section].items():
+        #     selected_criteria[boundary] = [criterion for criterion in criteria if request.form.get(criterion) == '1']
         selected_criteria = {}
         for boundary, criteria in grading_criteria[section].items():
-            selected_criteria[boundary] = [criterion for criterion in criteria if request.form.get(criterion) == '1']
+            selected_criteria[boundary] = []
+            for criterion in criteria:
+                unique_criterion_id = f"{boundary}__{criterion}"
+                if request.form.get(unique_criterion_id) == '1':
+                    selected_criteria[boundary].append(criterion)
 
         # Store the comment for this section
         comment = request.form.get(f'{section}_comments')
         print(comment)
         if comment:
             session[f'{section}_comments'] = comment
+
         max_score = section_max_scores[section]  # Get the maximum score for this section
         score_per_criterion = {}
+
         for boundary in grading_criteria[section]:
-            # Extract the integer value from the boundary string using regular expressions
-            match = re.search(r'\d+', boundary)
-            if match:
-                score = int(match.group())
-                total_criteria = len(grading_criteria[section][boundary])
-                score_per_criterion[boundary] = score / total_criteria
+            # Extract all the integer values from the boundary string using regular expressions
+            matches = re.findall(r'\d+', boundary)
+            # print(matches)
+            # print(boundary)
+
+            if matches:
+                # Convert the matches to integers and find the highest one
+                highest_score = max(int(match) for match in matches)
+                # print(highest_score)
+                score_per_criterion[boundary] = highest_score
 
 
+
+        # score = 0
+        # for boundary, selected in selected_criteria.items():
+        #     if selected:
+
+        #         score += score_per_criterion[boundary]
         score = 0
         for boundary, selected in selected_criteria.items():
-            score += len(selected) * score_per_criterion[boundary]
+            print(boundary)
+            if selected:
+                # Calculate the score per criterion by dividing the boundary score by the number of items in that boundary
+                score_per_selected_criterion = score_per_criterion[boundary] / len(grading_criteria[section][boundary])
+                print(score_per_selected_criterion)
+
+                # Add the score per criterion for each selected criterion in the boundary
+                score += len(selected) * score_per_selected_criterion
+
+
 
         session[f'{section}_score'] = score
         if section == "evaluation_of_solution":
