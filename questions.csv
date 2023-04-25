@@ -1,0 +1,7 @@
+﻿Year,Queues,Trees,Add/remove tree,Linked Lists,Stacks,Graphs,Arrays (2D and 1D),Reverse Polish,Depth First,Breadth first,Post Order,In order,Pre Order,Global/Local,Pass Val/Ref,Iteration,Recursion,Djikstra/A star search,Binary/Linear Search,Merge Sort,QuickSort,Insertion sort,Big O,Bubble Sort,Hashes and Hash Tables,Caching,Concurrent Processing,Computational Methods,Struct,"OOP (encapsulation, Polymorph, Inheritance)",Libraries/modularity,IDEs,Data mining/Big data,Perfomance modelling,Pipelining,Visualisation
+2022,X,X,X,X,X,,,,X,X,X,,,X,X,,X,,,,,,,,,,,"Abstraction, thinking ahead",,X,X,X,,X,,X
+2021,Q7 (short),,,,,,Q8 b,,,"Q1,d",,,,Q8 c d,,Q8 biii,,Q1 c (a star),Q2,,"Q3 a,b",,Q2 b,,,,"Q1,b","Q1,e Q8 a Decomp",,Q5 Q8d,,Q4,Q1 e,,Q6 a b,
+2020,Q5,Q1,Q1 e,"Q6 b, c + d(code)",,Q1 f,,,,Q1 d,,,,,,Q3 d (write code from rec),Q3,,,Q4 c,Q4 c,4 ab,Q4 c,Q 4d ,,,Q2 b,Q2 Decomp,,Q6 e,Q6 e,6 d ii,,,,
+2019,Q1,Q2,,Q2 b,,,Q2 iv,,,Q2 a,Q2 a iii,,,,Q3 a iv,,Q3,Q4 c,,Q5a,,Q5b,Q1 iv,Q1 iii,,Q7 c,,Q4 decomp,,Q7 ,,Q4 d,Q6,,Q4 iii,
+2018,Q6 Section b,Q1 (has code example),,,Q5,Q3 a,,,,Q1,,,,Q4 c,Q4 b,Q4 d iii,Q4,3B,Q5 d ii,,,Q5 d,,,,,,,Q6 i and ii,Q6 b,,Q3 d,,,,
+2017,,,,Q2,,Q4,q2 c,,Q4 ii iii,,Q4 ii,,,,,,Q5,,2D,,,Q1,Q1 b c  Q6 f,,,,Q2 f,Q6 Decomposition Q6 e abstraction,,Q6 c d,,Q2 e,Q2,Q2,,
