@@ -246,6 +246,18 @@ def parse_data(data, recency_weight_factor):
             year = int(re.match(r'\d+', row[0]).group())
         except (AttributeError, ValueError):
             continue
+        # question_counts is a dictionary that keeps track of the weighted count of questions for each topic. 
+        # The keys in the dictionary represent the question topics (column names in the data, except for the year column), 
+        # and the values are the weighted counts for each topic.
+
+        # The purpose of using weights is to give more importance to questions that are more recent, as specified by the recency_weight_factor. 
+        # The higher the value of recency_weight_factor, the more weight recent questions will have compared to older ones. e.g
+        # {
+        # 'Topic A': 25.5,
+        # 'Topic B': 18.0,
+        # 'Topic C': 32.7,
+        # 'Topic D': 12.2
+        # }
 
         recency_weight = 1 + recency_weight_factor * (current_year - year)
         for idx, cell in enumerate(row[1:], start=1):
@@ -254,37 +266,15 @@ def parse_data(data, recency_weight_factor):
 
     return question_counts
 
-
+# It takes the question_counts dictionary as an argument.
+# The function then iterates through each item in the question_counts dictionary and divides the weighted count by total_questions. 
 def calculate_probabilities(question_counts):
+    # The total_questions variable calculates the sum of all the weighted counts in the question_counts dictionary.
     total_questions = sum(question_counts.values())
+    # This gives the probability of each question.
     question_probabilities = {question: count / total_questions for question, count in question_counts.items()}
+    # It returns a dictionary containing the calculated probabilities for each question.
     return question_probabilities
-
-# @app.route('/data/algorithms')
-# def data_algorithms():
-#     csv1 = 'questions1.csv'
-#     recency_weight_factor = 0.5
-
-#     data1 = read_csv(csv1)
-#     question_counts1 = parse_data(data1, recency_weight_factor)
-
-#     probabilities = calculate_probabilities(question_counts1)
-#     sorted_probabilities = {k: v for k, v in sorted(probabilities.items(), key=lambda item: item[1], reverse=True)}
-
-#     return jsonify(list(sorted_probabilities.items()))
-
-# @app.route('/data/computer_systems')
-# def data_computer_systems():
-#     csv2 = 'questions2.csv'
-#     recency_weight_factor = 0.5
-
-#     data2 = read_csv(csv2)
-#     question_counts2 = parse_data(data2, recency_weight_factor)
-
-#     probabilities = calculate_probabilities(question_counts2)
-#     sorted_probabilities = {k: v for k, v in sorted(probabilities.items(), key=lambda item: item[1], reverse=True)}
-
-#     return jsonify(list(sorted_probabilities.items()))
 
 
 @app.route('/data/algorithms')
