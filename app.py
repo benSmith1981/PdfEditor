@@ -1,15 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_file,jsonify
-
-import json
-import os
-from flask import flash
+from flask import Flask, render_template, redirect, url_for, request, session, send_file, jsonify
 from collections import defaultdict
-
-from grading import grading_criteria
 import csv
 import re
 import datetime
-from pdfeditor import fill_pdf
+import json
+from .pdf_generator import fill_pdf
+
 now = datetime.datetime.now()
 current_year = now.year
 
