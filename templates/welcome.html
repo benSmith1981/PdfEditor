@@ -1,57 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Computer Science A-Level Marking Helper</title>
-    <meta name="description" content="Get started on marking your Computer Science A-level project with our easy-to-use assessment tool. Just tick the criteria from the band you think the student achieved and then enter a comment.">
-    <meta name="keywords" content="computer science, A-level, project, assessment, marking, criteria">
-    <meta name="author" content="Ben Smith">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base.html' %}
 
-    <!-- Open Graph tags -->
-    <meta property="og:title" content="Assessment Summary">
-    <meta property="og:description" content="Get started on marking your Computer Science A-level project with our easy-to-use assessment tool. Just tick the criteria from the band you think the student achieved and then enter a comment.">
-    <meta property="og:image" content="https://alevelcompscimarking.herokuapp.com/static/images/logo.png">
-    <meta property="og:url" content="https://alevelcompscimarking.herokuapp.com/">
-    <meta property="og:type" content="website">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <style>
-        .buymeacoffee {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 180px;
-            height: 180px;
-            background-image: url('https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png');
-            background-repeat: no-repeat;
-            background-size: contain;
-            z-index: 999;
-            cursor: pointer;
-        }
+{% block title %}Welcome{% endblock %}
 
-        .card {
-            margin-top: 50px;
-            padding: 20px;
-        }
-
-        .button-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .start-button {
-            font-size: 24px;
-            padding: 10px 30px;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
+{% block content %}
     <div class="container">
         <div class="row">
             <div class="col s12">
@@ -65,16 +16,6 @@
                 </div>
             </div>
         </div>
-        <div class="buymeacoffee" onclick="window.open('https:\/\/www.buymeacoffee.com/benjamina', '_blank')"></div>
     </div>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJ44Q5THKM"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
 
-    gtag('config', 'G-PJ44Q5THKM');
-    </script>
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Get started on marking your Computer Science A-level project with our easy-to-use assessment tool. Just tick the criteria from the band you think the student achieved and then enter a comment.">
+        <meta name="keywords" content="computer science, A-level, project, assessment, marking, criteria">
+        <meta name="author" content="Ben Smith">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Open Graph tags -->
+        <meta property="og:title" content="Assessment Summary">
+        <meta property="og:description" content="Get started on marking your Computer Science A-level project with our easy-to-use assessment tool. Just tick the criteria from the band you think the student achieved and then enter a comment.">
+        <meta property="og:image" content="https://alevelcompscimarking.herokuapp.com/static/images/logo.png">
+        <meta property="og:url" content="https://alevelcompscimarking.herokuapp.com/">
+        <meta property="og:type" content="website">
+        
+        <title>{% block title %}Default Title{% endblock %}</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <style>
+            .buymeacoffee {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 180px;
+                height: 180px;
+                background-image: url('https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png');
+                background-repeat: no-repeat;
+                background-size: contain;
+                z-index: 999;
+                cursor: pointer;
+            }
+
+            .card {
+                margin-top: 50px;
+                padding: 20px;
+            }
+
+            .button-container {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            .start-button {
+                font-size: 24px;
+                padding: 10px 30px;
+                border-radius: 5px;
+                background-color: #4CAF50;
+                color: white;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Exam Question Predictor</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('welcome') }}">Welcome</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('questions') }}">Questions</a>
+            </li>
+            </ul>
+        </div>
+        </nav>
+
+        <div class="container">
+            {% block content %}{% endblock %}
+            <div class="buymeacoffee" onclick="window.open('https:\/\/www.buymeacoffee.com/benjamina', '_blank')"></div>
+
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJ44Q5THKM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-PJ44Q5THKM');
+        </script>
+    </body>
+</html>

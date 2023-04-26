@@ -28,7 +28,9 @@ section_max_scores = {
 def index():
     return render_template('welcome.html')
     # return redirect(url_for('assessment', section='analysis'))
-
+@app.route('/welcome')
+def welcome():
+    return render_template('welcome.html')
 @app.route('/<section>', methods=['GET', 'POST'])
 def assessment(section):
     sections = ["analysis", "design", "developing_coded_solution", "testing_inform_development", "testing_inform_evaluation", "evaluation_of_solution"]
@@ -258,31 +260,54 @@ def calculate_probabilities(question_counts):
     question_probabilities = {question: count / total_questions for question, count in question_counts.items()}
     return question_probabilities
 
+# @app.route('/data/algorithms')
+# def data_algorithms():
+#     csv1 = 'questions1.csv'
+#     recency_weight_factor = 0.5
+
+#     data1 = read_csv(csv1)
+#     question_counts1 = parse_data(data1, recency_weight_factor)
+
+#     probabilities = calculate_probabilities(question_counts1)
+#     sorted_probabilities = {k: v for k, v in sorted(probabilities.items(), key=lambda item: item[1], reverse=True)}
+
+#     return jsonify(list(sorted_probabilities.items()))
+
+# @app.route('/data/computer_systems')
+# def data_computer_systems():
+#     csv2 = 'questions2.csv'
+#     recency_weight_factor = 0.5
+
+#     data2 = read_csv(csv2)
+#     question_counts2 = parse_data(data2, recency_weight_factor)
+
+#     probabilities = calculate_probabilities(question_counts2)
+#     sorted_probabilities = {k: v for k, v in sorted(probabilities.items(), key=lambda item: item[1], reverse=True)}
+
+#     return jsonify(list(sorted_probabilities.items()))
+
+
 @app.route('/data/algorithms')
 def data_algorithms():
     csv1 = 'questions1.csv'
-    recency_weight_factor = 0.5
-
+    recency_weight_factor = float(request.args.get('recency_weight_factor', 0.5))
     data1 = read_csv(csv1)
     question_counts1 = parse_data(data1, recency_weight_factor)
-
     probabilities = calculate_probabilities(question_counts1)
     sorted_probabilities = {k: v for k, v in sorted(probabilities.items(), key=lambda item: item[1], reverse=True)}
-
     return jsonify(list(sorted_probabilities.items()))
 
 @app.route('/data/computer_systems')
 def data_computer_systems():
-    csv2 = 'questions2.csv'
-    recency_weight_factor = 0.5
 
+    csv2 = 'questions2.csv'
+    recency_weight_factor = float(request.args.get('recency_weight_factor', 0.5))
     data2 = read_csv(csv2)
     question_counts2 = parse_data(data2, recency_weight_factor)
-
     probabilities = calculate_probabilities(question_counts2)
     sorted_probabilities = {k: v for k, v in sorted(probabilities.items(), key=lambda item: item[1], reverse=True)}
-
     return jsonify(list(sorted_probabilities.items()))
+
 
 @app.route('/questions')
 def questions():

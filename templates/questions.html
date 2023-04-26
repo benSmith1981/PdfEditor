@@ -1,18 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question Probabilities</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Question Predictor{% endblock %}
+
+{% block content %}
     <h1>Probabilities of Topics Appearing in 2023 (Weighted by Frequency and Recency)</h1>
+    <!-- Add this block of code after the <h1> tag and before the <h2> tag for "Algorithms and Data Structures" -->
+    <div>
+        <label for="recencyWeightFactor">Recency Weight Factor: </label>
+        <input type="number" id="recencyWeightFactor" name="recencyWeightFactor" step="0.01" min="0" max="1" value="0.5">
+        <button id="recalculateButton">Recalculate Probabilities</button>
+    </div>
+
     <h2>Algorithms and Data Structures</h2>
     <canvas id="probabilityChartAlgorithms" width="800" height="400"></canvas>
     <h2>Computer Systems</h2>
     <canvas id="probabilityChartComputerSystems" width="800" height="400"></canvas>
+    
     <script>
+
+
         async function fetchChartData(endpoint) {
             const response = await fetch(endpoint);
             const data = await response.json();
@@ -20,8 +26,14 @@
         }
 
 
-        async function renderChart(chartId, endpoint) {
-            const chartData = await fetchChartData(endpoint);
+        let chartInstances = {};
+
+        async function renderChart(chartId, endpoint, recency_weight_factor) {
+            if (chartInstances[chartId]) {
+                chartInstances[chartId].destroy();
+            }
+
+            const chartData = await fetchChartData(endpoint + "?recency_weight_factor=" + recency_weight_factor);            
             const labels = chartData.map(item => item[0]);
             const data = chartData.map(item => item[1]);
             const ctx = document.getElementById(chartId).getContext('2d');
@@ -57,10 +69,19 @@
                     }
                 }
             });
+            chartInstances[chartId] = chart;
+
         }
 
-        renderChart('probabilityChartAlgorithms', '/data/algorithms');
-        renderChart('probabilityChartComputerSystems', '/data/computer_systems');
+        const recencyWeightFactorInput = document.getElementById('recencyWeightFactor');
+        renderChart('probabilityChartAlgorithms', '/data/algorithms', recencyWeightFactorInput.value);
+        renderChart('probabilityChartComputerSystems', '/data/computer_systems', recencyWeightFactorInput.value);
+
+        document.getElementById('recalculateButton').addEventListener('click', () => {
+            const recencyWeightFactor = document.getElementById('recencyWeightFactor').value;
+            renderChart('probabilityChartAlgorithms', '/data/algorithms', recencyWeightFactor);
+            renderChart('probabilityChartComputerSystems', '/data/computer_systems', recencyWeightFactor);
+        });
+
     </script>
-</body>
-</html>
+{% endblock %}
