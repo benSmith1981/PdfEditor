@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, send_file,jsonify
 
 import json
 import os
 from flask import flash
+from collections import defaultdict
 
 from grading import grading_criteria
+import csv
 import re
 import datetime
 from pdfeditor import fill_pdf
@@ -221,6 +223,71 @@ def clear_data():
 
     flash("Data cleared successfully.")
     return redirect(url_for("summary"))
+
+
+# Exam question probability calcualtor
+
+def read_csv(filename):
+    with open(filename, 'r') as file:
+        reader = csv.reader(file)
+        data = [row for row in reader]
+    return data
+
+
+def parse_data(data, recency_weight_factor):
+    header, data = [item.strip() for item in data[0]], data[1:]
+    current_year = 2023
+    question_counts = defaultdict(float)
+
+    for row in data:
+        try:
+            year = int(re.match(r'\d+', row[0]).group())
+        except (AttributeError, ValueError):
+            continue
+
+        recency_weight = 1 + recency_weight_factor * (current_year - year)
+        for idx, cell in enumerate(row[1:], start=1):
+            if cell:
+                question_counts[header[idx]] += recency_weight
+
+    return question_counts
+
+
+def calculate_probabilities(question_counts):
+    total_questions = sum(question_counts.values())
+    question_probabilities = {question: count / total_questions for question, count in question_counts.items()}
+    return question_probabilities
+
+@app.route('/data/algorithms')
+def data_algorithms():
+    csv1 = 'questions1.csv'
+    recency_weight_factor = 0.5
+
+    data1 = read_csv(csv1)
+    question_counts1 = parse_data(data1, recency_weight_factor)
+
+    probabilities = calculate_probabilities(question_counts1)
+    sorted_probabilities = {k: v for k, v in sorted(probabilities.items(), key=lambda item: item[1], reverse=True)}
+
+    return jsonify(list(sorted_probabilities.items()))
+
+@app.route('/data/computer_systems')
+def data_computer_systems():
+    csv2 = 'questions2.csv'
+    recency_weight_factor = 0.5
+
+    data2 = read_csv(csv2)
+    question_counts2 = parse_data(data2, recency_weight_factor)
+
+    probabilities = calculate_probabilities(question_counts2)
+    sorted_probabilities = {k: v for k, v in sorted(probabilities.items(), key=lambda item: item[1], reverse=True)}
+
+    return jsonify(list(sorted_probabilities.items()))
+
+@app.route('/questions')
+def questions():
+    return render_template('questions.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
