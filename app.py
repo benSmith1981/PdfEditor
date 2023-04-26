@@ -4,8 +4,7 @@ import csv
 import re
 import datetime
 import json
-from .pdf_generator import fill_pdf
-
+from pdfeditor import fill_pdf
 now = datetime.datetime.now()
 current_year = now.year
 

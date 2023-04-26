@@ -1,8 +1,6 @@
 import os
 import pdfrw
 
-import pdfrw
-
 input_pdf = '330205-non-exam-assessment-cover-sheet-interactive.pdf'
 
 def get_field_names(input_pdf_path):
