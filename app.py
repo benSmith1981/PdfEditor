@@ -239,6 +239,7 @@ def read_csv(filename):
 def parse_data(data, recency_weight_factor):
     header, data = [item.strip() for item in data[0]], data[1:]
     current_year = 2023
+    # question_counts is a dictionary that keeps track of the weighted count of questions for each topic. 
     question_counts = defaultdict(float)
 
     for row in data:
@@ -246,9 +247,6 @@ def parse_data(data, recency_weight_factor):
             year = int(re.match(r'\d+', row[0]).group())
         except (AttributeError, ValueError):
             continue
-        # question_counts is a dictionary that keeps track of the weighted count of questions for each topic. 
-        # The keys in the dictionary represent the question topics (column names in the data, except for the year column), 
-        # and the values are the weighted counts for each topic.
 
         # The purpose of using weights is to give more importance to questions that are more recent, as specified by the recency_weight_factor. 
         # The higher the value of recency_weight_factor, the more weight recent questions will have compared to older ones. e.g
@@ -258,10 +256,18 @@ def parse_data(data, recency_weight_factor):
         # 'Topic C': 32.7,
         # 'Topic D': 12.2
         # }
+        # current_year - year: This computes the difference in years between the present year and the year the data was recorded. 
+        # For example, if the data is from 2020, the difference would be 3 (2023 - 2020).
 
+        # recency_weight_factor * (current_year - year): This multiplies the difference in years by the recency weight factor. 
+        # The recency weight factor is a value that you can set to control the importance given to more recent data.
+        # A higher value will give more weight to recent data, while a lower value will make the weighting less sensitive to the recency of the data.
+        # We add 1 so recency is never 0
         recency_weight = 1 + recency_weight_factor * (current_year - year)
         for idx, cell in enumerate(row[1:], start=1):
             if cell:
+                # The keys in the dictionary represent the question topics (column names in the data, except for the year column), 
+                # and the values are the weighted counts for each topic.
                 question_counts[header[idx]] += recency_weight
 
     return question_counts
