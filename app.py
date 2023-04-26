@@ -28,14 +28,17 @@ section_max_scores = {
 def index():
     return render_template('welcome.html')
     # return redirect(url_for('assessment', section='analysis'))
+
+
 @app.route('/welcome')
 def welcome():
     return render_template('welcome.html')
+
+
 @app.route('/<section>', methods=['GET', 'POST'])
 def assessment(section):
     sections = ["analysis", "design", "developing_coded_solution", "testing_inform_development", "testing_inform_evaluation", "evaluation_of_solution"]
     # Handle the analysis section separately
-    print(section)
 
     if section not in sections:
         return "Invalid section", 404
@@ -54,7 +57,6 @@ def assessment(section):
 
         # Store the comment for this section
         comment = request.form.get(f'{section}_comments')
-        print(comment)
         if comment:
             session[f'{section}_comments'] = comment
 
@@ -82,11 +84,9 @@ def assessment(section):
         #         score += score_per_criterion[boundary]
         score = 0
         for boundary, selected in selected_criteria.items():
-            print(boundary)
             if selected:
                 # Calculate the score per criterion by dividing the boundary score by the number of items in that boundary
                 score_per_selected_criterion = score_per_criterion[boundary] / len(grading_criteria[section][boundary])
-                print(score_per_selected_criterion)
 
                 # Add the score per criterion for each selected criterion in the boundary
                 score += len(selected) * score_per_selected_criterion
@@ -123,7 +123,6 @@ def assessment(section):
 @app.route('/summary')
 def summary():
     sections = session.get('sections', [])
-    print(sections)
     return render_template('summary.html', current_year=current_year, sections=sections, section_max_scores=section_max_scores)
 
 @app.route('/fill_cover_sheet', methods=['POST'])
