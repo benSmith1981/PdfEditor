@@ -1,5 +1,5 @@
 Flask==2.0.2
-python-dateutil==2.7.3
+python-dateutil
 gunicorn==20.1.0
 itsdangerous==2.0.1
 heroku==0.1.4
