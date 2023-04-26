@@ -5,6 +5,7 @@ import re
 import datetime
 import json
 from pdfeditor import fill_pdf
+from grading import grading_criteria
 now = datetime.datetime.now()
 current_year = now.year
 
