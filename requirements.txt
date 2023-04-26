@@ -11,6 +11,5 @@ pdfforms==2.0.0
 pdfrw==0.4
 pyexcel==0.7.0
 pyexcel-io==0.6.6
-python-dateutil>=2.7.3,<3.0.0
 texttable==1.6.7
 Werkzeug==2.2.3
